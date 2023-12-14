@@ -1,6 +1,7 @@
 Spaceship bob = new Spaceship();
 ArrayList <Asteroid> belt;
 Star[] galaxy;
+ArrayList <Bullet> spray;
 
 boolean wIsPressed = false;
 boolean aIsPressed = false;
@@ -20,11 +21,12 @@ public void setup()
   {
     belt.add(new Asteroid());
   }
+  spray = new ArrayList <Bullet>();
 }
 
 public void keyPressed()
 {
-  if (key == 'a')
+  if (key == 'a')  
   {
     aIsPressed = true;
   } else if (key == 'd')
@@ -39,6 +41,9 @@ public void keyPressed()
   } else if (key== ' ')
   {
     bob.hyperspace();
+  } else if (key=='f')
+  {
+    spray.add(new Bullet(bob));
   }
 }
 public void keyReleased()
@@ -71,45 +76,70 @@ public void draw()
     belt.get(i).show();
     belt.get(i).fly();
     double d = dist((float)bob.getX(), (float)bob.getY(), (float)belt.get(i).getX(), (float)belt.get(i).getY());
-    if (d<20)
+
+    if (d<25)
     {
       belt.remove(i);
     }
-    if (wIsPressed==true && dIsPressed==true)
+  }
+  for (int i = 0; i<spray.size(); i++)
+  {
+    spray.get(i).show();
+    spray.get(i).move();
+    if (spray.get(i).getX()>400 || spray.get(i).getX()<0 || spray.get(i).getY()>400 || spray.get(i).getY()<0)
     {
-      bob.turn(1);
-      bob.accelerate(0.01);
+      spray.remove(i);
+      i--;
     }
-    if (wIsPressed==true && aIsPressed==true)
+  }  
+  for (int i = 0; i<belt.size(); i++)
+  {
+    for (int j = 0; j<spray.size(); j++)
     {
-      bob.turn(-1);
-      bob.accelerate(0.01);
+      double distance = dist((float)spray.get(j).getX(), (float)spray.get(j).getY(), (float)belt.get(i).getX(), (float)belt.get(i).getY());
+      if (distance<15)
+      {
+        belt.remove(i);
+        spray.remove(j);
+        j=spray.size();
+        i--;
+      }
     }
-    if (wIsPressed==false && dIsPressed==true)
-    {
-      bob.turn(1);
-    }
-    if (aIsPressed==true && wIsPressed==false)
-    {
-      bob.turn(-1);
-    }
-    if (wIsPressed==true && aIsPressed==false && dIsPressed == false)
-    {
-      bob.accelerate(0.01);
-    }
-    if (sIsPressed==true && dIsPressed==true)
-    {
-      bob.turn(1);
-      bob.accelerate(-0.01);
-    }
-    if (sIsPressed==true && aIsPressed==true)
-    {
-      bob.turn(-1);
-      bob.accelerate(-0.01);
-    }
-    if (sIsPressed==true && aIsPressed==false && dIsPressed == false)
-    {
-      bob.accelerate(-0.01);
-    }
+  }
+  if (wIsPressed==true && dIsPressed==true)
+  {
+    bob.turn(3);
+    bob.accelerate(0.05);
+  }
+  if (wIsPressed==true && aIsPressed==true)
+  {
+    bob.turn(-3);
+    bob.accelerate(0.05);
+  }
+  if (wIsPressed==false && dIsPressed==true)
+  {
+    bob.turn(3);
+  }
+  if (aIsPressed==true && wIsPressed==false)
+  {
+    bob.turn(-3);
+  }
+  if (wIsPressed==true && aIsPressed==false && dIsPressed == false)
+  {
+    bob.accelerate(0.05);
+  }
+  if (sIsPressed==true && dIsPressed==true)
+  {
+    bob.turn(3);
+    bob.accelerate(-0.05);
+  }
+  if (sIsPressed==true && aIsPressed==true)
+  {
+    bob.turn(-3);
+    bob.accelerate(-0.05);
+  }
+  if (sIsPressed==true && aIsPressed==false && dIsPressed == false)
+  {
+    bob.accelerate(-0.05);
   }
 }
